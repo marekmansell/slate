@@ -8,9 +8,6 @@ toc_footers:
   - <a href='//marekmansell.sk'>Marek Mansell</a>
   - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
 
-includes:
-  - errors
-
 search: true
 ---
 
@@ -148,135 +145,161 @@ The SocialN API includes a machine readable `errors` key. It also has a `hint` k
 
 
 
-# n
+# Users
 
+Users represent the data which is connected directly to a user account, such as a password, biography, profile photo, etc.
 
-```python
-import kittn
+## Attributes
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+Attribute				| Type			| Description
+----------------------- | ------------- | -----------
+`username` 				| string		| The user name used for login and API requests (e.g. "marekmansell")
+`formatted_name` 		| string		| The formatted user name showed on profile/posts (e.g. "Marek Mansell") 
+`password` 				| string		| The API password
+`bio` 					| string		| The personal biography that shows on the profile page of a user
+`photo` 				| string		| The user's profile photo 
+`web` 					| url			| The user's website url
+`mail` 					| string		| The user's email address
+`date_of_birth` 		| date			| The user's date of birth
 
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Get All Users
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
+curl --request GET \
+  --url 'https://mtaa.marekmansell.sk/v1/users' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+
 ```
 
-> The above command returns JSON structured like this:
+Retrieves all users.
 
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
+`GET https://mtaa.marekmansell.sk/v1/users`
 
 
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+## Get a User
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
+curl --request GET \
+  --url 'https://mtaa.marekmansell.sk/v1/user/:username' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+
 ```
 
-> The above command returns JSON structured like this:
+Retrieves a specific user by username.
 
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
+`GET https://mtaa.marekmansell.sk/v1/user/:username`
+* `username`  - The user name used for login and API requests (e.g. "marekmansell")
+
+## Update a User
+
+```shell
+curl --request PATCH \
+  --url 'https://mtaa.marekmansell.sk/v1/user/:username' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+  --header 'Content-type: application/json' \
+  --data '{"user":{"bio":"New bio aout the user..."}}'
 ```
 
-This endpoint deletes a specific kitten.
+Updates a specific user by username.
 
-### HTTP Request
+`GET https://mtaa.marekmansell.sk/v1/user/:username`
+* `username`  - The user name used for login and API requests (e.g. "marekmansell")
 
-`DELETE http://example.com/kittens/<ID>`
 
-### URL Parameters
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+
+# Posts
+
+Posts represent individual SocialN posts which include a text description of up to 150 character and an optional image. Each post is linked to it's author.
+
+## Attributes
+
+Attribute				| Type			| Description
+----------------------- | ------------- | -----------
+`username` 				| string		| The user name used for login and API requests (e.g. "marekmansell")
+`formatted_name` 		| string		| The formatted user name showed on profile/posts (e.g. "Marek Mansell") 
+`publish_time` 			| datetime		| The time at which the post has been published
+`photo` 				| image			| The image attached to the post (optional)
+`content` 				| string		| The actual content of the post (max 150 characters)
+`last_edit_time` 		| datetime		| The time at which the post has been updated (only most recent change)
+
+## Get All Posts
+
+```shell
+curl --request GET \
+  --url 'https://mtaa.marekmansell.sk/v1/posts' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+
+```
+
+Retrieves all posts from all users.
+
+`GET https://mtaa.marekmansell.sk/v1/posts`
+
+## Get a Post
+
+```shell
+curl --request GET \
+  --url 'https://mtaa.marekmansell.sk/v1/post/:post_id' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+
+```
+
+Retrieves a specific post by id.
+
+`GET https://mtaa.marekmansell.sk/v1/post/:post_id`
+* `post_id`  - The unique post id for the searched post
+
+## Update a Post
+
+```shell
+curl --request PATCH \
+  --url 'https://mtaa.marekmansell.sk/v1/post/:post_id' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+  --header 'Content-type: application/json' \
+  --data '{"post":{"content":"New content..."}}'
+```
+
+Updates a specific post by post_id.
+
+`GET https://mtaa.marekmansell.sk/v1/post/:post_id`
+* `post_id`  - The unique post id for the searched post
+
+
+## Delete a Post
+
+```shell
+curl --request DELETE \
+  --url 'https://mtaa.marekmansell.sk/v1/post/:post_id' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+```
+
+Delete a specific post by post_id.
+
+`GET https://mtaa.marekmansell.sk/v1/post/:post_id`
+* `post_id`  - The unique post id for the searched post
+
+
+## Create a Post
+
+```shell
+# Example without an image
+curl --request POST \
+  --url 'https://mtaa.marekmansell.sk/v1/post/' \
+  --header 'Authorization: Token token=YOUR-PASSWORD' \
+  --header 'Accept: application/json' \
+  --header 'Content-type: application/json' \
+  --data '{"post":{"content":"Very new post..."}}'
+```
+
+Create a new post
+
+`GET https://mtaa.marekmansell.sk/v1/post/`
 
